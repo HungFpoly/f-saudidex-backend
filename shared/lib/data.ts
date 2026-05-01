@@ -1,0 +1,107 @@
+import { Category, City, Region, Company } from '../types';
+
+export const CATEGORIES: Category[] = [
+  { id: '1', name_en: 'Industrial Equipment', name_ar: 'المعدات الصناعية', slug: 'industrial-equipment', icon: 'Settings' },
+  { id: '2', name_en: 'Electrical', name_ar: 'الكهرباء', slug: 'electrical', icon: 'Zap' },
+  { id: '3', name_en: 'Food Manufacturing', name_ar: 'تصنيع الأغذية', slug: 'food-manufacturing', icon: 'Utensils' },
+  { id: '4', name_en: 'Building Materials', name_ar: 'مواد البناء', slug: 'building-materials', icon: 'Construction' },
+  { id: '5', name_en: 'Medical Supplies', name_ar: 'المستلزمات الطبية', slug: 'medical-supplies', icon: 'Stethoscope' },
+  { id: '6', name_en: 'Chemicals', name_ar: 'المواد الكيميائية', slug: 'chemicals', icon: 'FlaskConical' },
+  { id: '7', name_en: 'Automotive', name_ar: 'السيارات', slug: 'automotive', icon: 'Car' },
+];
+
+export const REGIONS: Region[] = [
+  { id: '1', name_en: 'Riyadh Region', name_ar: 'منطقة الرياض', slug: 'riyadh-region' },
+  { id: '2', name_en: 'Makkah Region', name_ar: 'منطقة مكة المكرمة', slug: 'makkah-region' },
+  { id: '3', name_en: 'Eastern Province', name_ar: 'المنطقة الشرقية', slug: 'eastern-province' },
+];
+
+export const CITIES: City[] = [
+  { id: '1', region_id: '1', name_en: 'Riyadh', name_ar: 'الرياض', slug: 'riyadh' },
+  { id: '2', region_id: '2', name_en: 'Jeddah', name_ar: 'جدة', slug: 'jeddah' },
+  { id: '3', region_id: '3', name_en: 'Dammam', name_ar: 'الدمام', slug: 'dammam' },
+];
+
+export const MOCK_COMPANIES: Company[] = [
+  {
+    id: '100001',
+    public_company_id: 100001,
+    slug: 'najd-commercial-press-company',
+    name_en: 'Najd Commercial Press Company',
+    name_ar: 'شركة مطابع نجد التجارية',
+    business_type: 'manufacturer',
+    description_en: 'Leading commercial printing and packaging solutions provider in Saudi Arabia.',
+    description_ar: 'مزود رائد لحلول الطباعة التجارية والتغليف في المملكة العربية السعودية.',
+    logo_url: 'https://picsum.photos/seed/najd/200/200',
+    cover_image_url: 'https://picsum.photos/seed/najd-cover/1200/400',
+    website_url: 'https://www.najdpress.com',
+    city_id: '1',
+    region_id: '1',
+    full_address: 'Riyadh, Saudi Arabia',
+    is_verified: true,
+    is_featured: true,
+    status: 'approved',
+    confidence_score: 0.99,
+    data_source: 'Direct Entry',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    categories: ['1'],
+    brands: ['Najd Press'],
+    products: ['Commercial Printing', 'Packaging', 'Books'],
+    fields: ['Printing', 'Packaging']
+  },
+  {
+    id: '100002',
+    public_company_id: 100002,
+    slug: 'zamil-industrial-investment-co',
+    name_en: 'Zamil Industrial Investment Co',
+    name_ar: 'شركة الزامل للاستثمار الصناعي',
+    business_type: 'manufacturer',
+    description_en: 'Global investment company providing high-quality solutions for the construction industry.',
+    description_ar: 'شركة استثمار عالمية تقدم حلولاً عالية الجودة لصناعة البناء.',
+    logo_url: 'https://picsum.photos/seed/zamil/200/200',
+    cover_image_url: 'https://picsum.photos/seed/zamil-cover/1200/400',
+    website_url: 'https://www.zamilindustrial.com',
+    city_id: '3',
+    region_id: '3',
+    full_address: 'Dammam, Saudi Arabia',
+    is_verified: true,
+    is_featured: true,
+    status: 'approved',
+    confidence_score: 0.98,
+    data_source: 'Direct Entry',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    categories: ['1', '2', '4'],
+    brands: ['Zamil Steel', 'Zamil Air Conditioners'],
+    products: ['Steel Structures', 'Air Conditioners', 'Insulation'],
+    fields: ['Construction', 'HVAC', 'Steel']
+  },
+  {
+    id: '100003',
+    public_company_id: 100003,
+    slug: 'controls-&-electrics-arabia-ltd.',
+    name_en: 'Controls & Electrics Arabia Ltd.',
+    name_ar: 'شركة التحكم والكهرباء العربية المحدودة',
+    business_type: 'manufacturer',
+    description_en: 'Specialized in control systems and electrical engineering solutions.',
+    description_ar: 'متخصصة في أنظمة التحكم وحلول الهندسة الكهربائية.',
+    logo_url: 'https://picsum.photos/seed/controls/200/200',
+    cover_image_url: 'https://picsum.photos/seed/controls-cover/1200/400',
+    website_url: 'https://www.cearabia.com',
+    city_id: '3',
+    region_id: '3',
+    full_address: 'Al Khobar, Saudi Arabia',
+    is_verified: true,
+    is_featured: false,
+    status: 'approved',
+    confidence_score: 0.97,
+    data_source: 'Direct Entry',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    categories: ['2'],
+    brands: ['CE Arabia'],
+    products: ['Control Panels', 'Electrical Systems', 'Automation'],
+    fields: ['Automation', 'Electrical']
+  }
+];

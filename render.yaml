@@ -1,0 +1,37 @@
+services:
+  - type: web
+    name: saudidex-backend
+    runtime: node
+    plan: starter
+    buildCommand: npm ci && PLAYWRIGHT_BROWSERS_PATH=0 npx playwright install --with-deps chromium chromium-headless-shell && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: CORS_ORIGIN
+        sync: false
+      - key: ADMIN_CURSOR_SECRET
+        sync: false
+      - key: VITE_SUPABASE_URL
+        sync: false
+      - key: VITE_SUPABASE_ANON_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: MISTRAL_API_KEY
+        sync: false
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: HUGGINGFACE_API_KEY
+        sync: false
+      - key: BROWSERLESS_TOKEN
+        sync: false
+      - key: SCRAPINGBEE_API_KEY
+        sync: false
+      - key: PLAYWRIGHT_BROWSERS_PATH
+        value: "0"

@@ -1,0 +1,15 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+.vercel
+
+# Crawlee / Apify SDK local persistence (regenerated on crawl)
+storage/
+
+# Supabase CLI local temp (pooler URL, project ref; regenerated locally)
+supabase/.temp/
