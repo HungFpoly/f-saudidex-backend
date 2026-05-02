@@ -235,8 +235,7 @@ async function safeFetch(url: string, timeout = 45000): Promise<{ html: string |
 // Smart fetch: automatically detects JS-heavy sites and uses browser rendering
 async function smartFetch(url: string, timeout = 45000): Promise<{ html: string | null; markdown: string; url: string }> {
   const lower = url.toLowerCase();
-  // This domain is handled well by deterministic markdown parsing; avoid local Playwright dependency.
-  const forceHttpOnly = lower.includes('saudiindustryguide.com');
+  // Các directory này hay chặn fetch Node / cần JS — ưu tiên Playwright (hoặc ScrapingBee phía trên).
   const isJSHeavy =
     lower.includes('.aspx') ||
     lower.includes('mcci.org.sa') ||
@@ -244,7 +243,12 @@ async function smartFetch(url: string, timeout = 45000): Promise<{ html: string 
     lower.includes('react') ||
     lower.includes('vue.js') ||
     lower.includes('__dopostback') ||
-    lower.includes('/home/factories');
+    lower.includes('/home/factories') ||
+    lower.includes('cybo.com') ||
+    lower.includes('industry.com.sa') ||
+    lower.includes('saudiindustryguide.com') ||
+    lower.includes('saudidir.com') ||
+    lower.includes('ksa.directory');
 
   const scrapingBeeKey = process.env.SCRAPINGBEE_API_KEY;
   const browserlessToken = process.env.BROWSERLESS_TOKEN;
@@ -294,10 +298,6 @@ async function smartFetch(url: string, timeout = 45000): Promise<{ html: string 
     }
   }
 
-  if (forceHttpOnly) {
-    return fetchUrlContent(url, finalTimeout);
-  }
-
   if (isJSHeavy) {
     // Prevent Playwright from crashing Vercel's read-only serverless environment
     // UNLESS we are using Browserless.io (remote browser)
@@ -314,24 +314,46 @@ async function smartFetch(url: string, timeout = 45000): Promise<{ html: string 
     }
   }
 
-  // Default path: try HTTP fetch first; if the response is a WAF block page,
-  // retry with browser rendering to bypass Mod_Security/anti-bot protections.
-  const httpResult = await fetchUrlContent(url, finalTimeout);
-  const html = httpResult.html || '';
-  const looksBlocked =
-    /mod_security/i.test(html) ||
-    /not acceptable/i.test(html) ||
-    /access denied/i.test(html);
-  if (looksBlocked) {
-    console.warn(`[Scraper] WAF block detected for ${url}; retrying with browser rendering.`);
+  // Default path: HTTP trước; nếu body giống WAF hoặc status 403/401/429 (anti-bot) thì retry Playwright.
+  const vercelBlocksLocalPlaywright = process.env.VERCEL === '1' && !browserlessToken;
+
+  try {
+    const httpResult = await fetchUrlContent(url, finalTimeout);
+    const html = httpResult.html || '';
+    const looksBlocked =
+      /mod_security/i.test(html) ||
+      /not acceptable/i.test(html) ||
+      /access denied/i.test(html);
+    if (looksBlocked) {
+      console.warn(`[Scraper] WAF block detected for ${url}; retrying with browser rendering.`);
+      if (vercelBlocksLocalPlaywright) {
+        console.warn(`[Scraper] Vercel without BROWSERLESS_TOKEN; skipping browser retry.`);
+        return httpResult;
+      }
+      try {
+        return await fetchWithBrowser(url, finalTimeout);
+      } catch (e: any) {
+        console.warn(`[Scraper] Browser retry failed for ${url}; using blocked HTTP content:`, e?.message || e);
+        return httpResult;
+      }
+    }
+    return httpResult;
+  } catch (err: any) {
+    const msg = String(err?.message || err || '');
+    const httpHardBlock = /HTTP\s+(403|401|429)\s*:/i.test(msg);
+    if (!httpHardBlock) throw err;
+    console.warn(`[Scraper] ${msg.trim()} for ${url}; retrying with browser rendering.`);
+    if (vercelBlocksLocalPlaywright) {
+      console.warn(`[Scraper] Vercel without BROWSERLESS_TOKEN; cannot retry after HTTP hard block.`);
+      throw err;
+    }
     try {
       return await fetchWithBrowser(url, finalTimeout);
-    } catch (e: any) {
-      console.warn(`[Scraper] Browser retry failed for ${url}; using blocked HTTP content:`, e?.message || e);
-      return httpResult;
+    } catch (browserErr: any) {
+      console.warn(`[Scraper] Browser retry failed for ${url}:`, browserErr?.message || browserErr);
+      throw err;
     }
   }
-  return httpResult;
 }
 
 // Fetch with browser rendering (Playwright) for JS-heavy sites
